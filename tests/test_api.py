@@ -56,7 +56,7 @@ class TestActivitiesEndpoint:
         assert "Soccer Team" in data
         assert "Basketball Team" in data
         assert "Drama Club" in data
-        assert len(data) == 9  # Total number of activities
+        assert len(data) == len(activities)  # Total number of activities should match the source
     
     def test_activity_structure(self, client):
         """Test that each activity has the correct structure"""

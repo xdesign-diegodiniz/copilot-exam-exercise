@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `<ul class="participants-list">${details.participants.map(email => 
               `<li>
                 <span class="participant-email">${email}</span>
-                <button class="delete-btn" data-activity="${name}" data-email="${email}" title="Unregister participant">🗑️</button>
+                <button class="delete-btn" data-activity="${name}" data-email="${email}" title="Unregister participant" aria-label="Unregister participant">🗑️</button>
               </li>`
             ).join('')}</ul>`
           : `<p class="no-participants">No participants yet</p>`;
