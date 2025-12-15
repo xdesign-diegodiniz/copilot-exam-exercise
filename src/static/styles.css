@@ -136,6 +136,13 @@ section h3 {
   background-color: #e3f2fd;
   opacity: 1;
 }
+.delete-btn:focus,
+.delete-btn:focus-visible {
+  outline: 2px solid #1a237e;
+  outline-offset: 2px;
+  background-color: #e3f2fd;
+  opacity: 1;
+}
 .no-participants {
   font-style: italic;
   color: #999;
