@@ -124,6 +124,55 @@ class TestSignupEndpoint:
         
         for email in emails:
             assert email in chess_participants
+    
+    def test_signup_when_activity_is_full(self, client):
+        """Test that signup is prevented when activity reaches max_participants limit"""
+        # Chess Club has max_participants: 12 and already has 2 participants
+        # So we can add 10 more before it's full
+        max_capacity = activities["Chess Club"]["max_participants"]
+        current_count = len(activities["Chess Club"]["participants"])
+        spots_available = max_capacity - current_count
+        
+        # Fill up to capacity
+        for i in range(spots_available):
+            email = f"student{i}@mergington.edu"
+            response = client.post(f"/activities/Chess Club/signup?email={email}")
+            assert response.status_code == 200
+        
+        # Verify activity is now full
+        activities_response = client.get("/activities")
+        activities_data = activities_response.json()
+        assert len(activities_data["Chess Club"]["participants"]) == max_capacity
+        
+        # Try to add one more student - should fail
+        response = client.post("/activities/Chess Club/signup?email=overflow@mergington.edu")
+        assert response.status_code == 400
+        data = response.json()
+        assert "Activity is full" in data["detail"]
+    
+    def test_signup_at_exact_capacity(self, client):
+        """Test edge case when activity is exactly at capacity"""
+        # Basketball Team has max_participants: 15 and 1 participant
+        # Fill it to exactly max capacity
+        max_capacity = activities["Basketball Team"]["max_participants"]
+        current_count = len(activities["Basketball Team"]["participants"])
+        spots_available = max_capacity - current_count
+        
+        # Fill to exact capacity
+        for i in range(spots_available):
+            email = f"player{i}@mergington.edu"
+            response = client.post(f"/activities/Basketball Team/signup?email={email}")
+            assert response.status_code == 200
+        
+        # Verify we're at exact capacity
+        activities_response = client.get("/activities")
+        activities_data = activities_response.json()
+        assert len(activities_data["Basketball Team"]["participants"]) == max_capacity
+        
+        # Try to add one more - should fail
+        response = client.post("/activities/Basketball Team/signup?email=extraplayer@mergington.edu")
+        assert response.status_code == 400
+        assert "Activity is full" in response.json()["detail"]
 
 
 class TestUnregisterEndpoint:
